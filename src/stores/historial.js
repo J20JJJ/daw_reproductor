@@ -6,7 +6,7 @@ export const useHistoryStore = defineStore('historyStore', () => {
 
     const addToHistory = (song) => {
         history.value.unshift(song);
-        // if (history.value.length > 10) history.value.pop();
+        if (history.value.length > 5) history.value.pop();
     };
 
     return { history, addToHistory };
