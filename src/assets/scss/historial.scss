@@ -1,0 +1,45 @@
+.history-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #1a2421;
+    border-radius: 8px;
+    color: white;
+    max-height: 400px;
+    overflow-y: auto; 
+
+    h3 {
+        text-align: center;
+    }
+}
+
+.history-container::-webkit-scrollbar {
+    display: none;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #2c3e50;
+    border-radius: 5px;
+}
+
+.song-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.song-info {
+    flex: 1;
+}
+
+.btn-song-play-historial {
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}

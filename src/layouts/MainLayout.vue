@@ -1,6 +1,5 @@
 <template>
     <div class="player-container">
-
         <div class="content-container">
             <div class="lateral-container">
                 <div class="search-box-container">
@@ -8,7 +7,7 @@
                     <i class="bi bi-search"></i>
                 </div>
                 <nav>
-
+                    <historial />
                 </nav>
             </div>
             <div class="data-container">
@@ -49,6 +48,7 @@
     import { useTemplateRef, ref, onMounted, watch } from 'vue';
     import { useSoundDataStore } from '../stores/soundData';
     import { useSearchStore } from '@/stores/search';
+    import historial from '@/pages/historial.vue';
 
     const searchDataStore = useSearchStore();
     const soundDataStore = useSoundDataStore();

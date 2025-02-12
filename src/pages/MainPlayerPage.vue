@@ -7,7 +7,7 @@
                 </div>
                 <div class="song-info">
                     <div class="song-info-name">
-                        <label>{{  soundData.name }}</label>
+                        <label>{{ soundData.name }}</label>
                     </div>
                     <div class="song-info-data">
                         <label>{{ soundData.username }}</label>
@@ -19,49 +19,51 @@
                     <i class="bi bi-info-circle btn-song-info"></i>
                     <i class="bi bi-play-circle btn-song-play" @click="changeCurrentSong(key)"></i>
                 </div>
-            </div> 
-            <loadingComponent class="wrapper_cargar_mas" v-if="abajo"/>
+            </div>
+            <loadingComponent class="wrapper_cargar_mas" v-if="abajo" />
         </div>
         <div class="loading-gif-container" v-show="searchDataStore.loadSearch == false">
-            <loadingComponent class="wrapper_carga_total"/>
+            <loadingComponent class="wrapper_carga_total" />
         </div>
     </div>
 </template>
 
 <script setup>
-    import { onMounted, ref, watch } from 'vue';
-    import { useSoundDataStore } from '../stores/soundData';
-    import { useSearchStore } from '@/stores/search';
-    import loadingComponent from '@/components/loadingComponent.vue';
-    import apiService from '../services/apiService';
+import { onMounted, ref, watch } from 'vue';
+import { useSoundDataStore } from '../stores/soundData';
+import { useSearchStore } from '@/stores/search';
+import loadingComponent from '@/components/loadingComponent.vue';
+import apiService from '../services/apiService';
+import { useHistoryStore } from '@/stores/historial';
 
-    const searchDataStore = useSearchStore();
-    const soundDataStore = useSoundDataStore();
+const searchDataStore = useSearchStore();
+const soundDataStore = useSoundDataStore();
+const historyStore = useHistoryStore();
 
-    let soundsData = ref([]);
-    let timeOutId = 0;
-    let abajo = ref(true);
-    let page = ref(1);
+let soundsData = ref([]);
+let timeOutId = 0;
+let abajo = ref(true);
+let page = ref(1);
 
-    watch(
-        () => searchDataStore.searchText, 
-        () => {
-            searchDataStore.loadSearch = false;
-            if(timeOutId != 0){
-                clearTimeout(timeOutId)
-                timeOutId = 0;
-            }
-            timeOutId = setTimeout(() => {
-                page.value = 1;
-                soundsData.value = [];
-                getSoundsData();
-            }, 1000);
+watch(
+    () => searchDataStore.searchText,
+    () => {
+        searchDataStore.loadSearch = false;
+        if (timeOutId != 0) {
+            clearTimeout(timeOutId)
+            timeOutId = 0;
         }
-    );
+        timeOutId = setTimeout(() => {
+            page.value = 1;
+            soundsData.value = [];
+            getSoundsData();
+        }, 1000);
+    }
+);
 
-    onMounted(async () => {  
-        getSoundsData();
-    });
+onMounted(async () => {
+    getSoundsData();
+});
 
 const getSoundsData = async () => {
     let response = await apiService.getSounds(searchDataStore.searchText, page.value);
@@ -85,19 +87,26 @@ const getSoundsData = async () => {
 };
 
 
-    const changeCurrentSong = (key) => {
-        console.log("URL del sonido:", soundsData.value[key].previews?.["preview-hq-mp3"]);
-        soundDataStore.soundName = soundsData.value[key].name;
-        soundDataStore.soundImg = soundsData.value[key].images.spectral_m;
-        soundDataStore.soundUrl = soundsData.value[key].previews["preview-hq-mp3"];
-    }
+const changeCurrentSong = (key) => {
+    console.log("URL del sonido:", soundsData.value[key].previews?.["preview-hq-mp3"]);
+    soundDataStore.soundName = soundsData.value[key].name;
+    soundDataStore.soundImg = soundsData.value[key].images.spectral_m;
+    soundDataStore.soundUrl = soundsData.value[key].previews["preview-hq-mp3"];
 
-    const handleScroll = (event) => {
-        let bottomOfWindow = event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight;
-        if (bottomOfWindow) {
-            page.value++;
-            abajo.value = true;
-            getSoundsData();
-        }
+    historyStore.addToHistory({
+        name: soundsData.value[key].name,
+        img: soundsData.value[key].images.spectral_m,
+        url: soundsData.value[key].previews["preview-hq-mp3"]
+    });
+}
+
+
+const handleScroll = (event) => {
+    let bottomOfWindow = event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight;
+    if (bottomOfWindow) {
+        page.value++;
+        abajo.value = true;
+        getSoundsData();
     }
+}
 </script>
